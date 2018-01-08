@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Type Ahead 👀</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <form class="search-form">
+    <input type="text" class="search" placeholder="City or State">
+    <ul class="suggestions">
+      <li>Filter for a city</li>
+      <li>or a state</li>
+    </ul>
+  </form>
+  <script>
+    const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+    // TODO: Figure out why uppercase letters in the search criteria CHANGE the casing in the display of the word, but lowercase letters do not.
+    const cities = [];
+
+    // fetch is built into the browser
+    // fetch returns a promise
+    //    var prom = fetch(endpoint);
+    //    console.log(prom);
+    //    fetch(endpoint).then(blob => console.log(blob));
+    fetch(endpoint).then(blob => blob.json()).then(data => cities.push(...data));
+
+    // findMatches filters the data to match the values provided in wordToMatch
+    function findMatches(wordToMatch, cities) {
+      return cities.filter(place => {
+        // here we need to figure out if the city or state matches what was searched
+        const regex = new RegExp(wordToMatch, 'gi');
+        return place.city.match(regex) || place.state.match(regex);
+      })
+    }
+
+    function numberWithCommas(x) {
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+
+    function displayMatches() {
+      //      console.log(this.value);
+      const matchArray = findMatches(this.value, cities);
+      //      console.log(matchArray);
+      // now put it into html:
+      const html = matchArray.map(place => {
+        const regex = new RegExp(this.value, 'gi');
+        const cityName = place.city.replace(regex, `<span class="hl">${this.value}</span>`);
+        const stateName = place.state.replace(regex, `<span class="hl">${this.value}</span>`);
+
+        // use cityName and stateName below; when first testing it was place.city and place.state
+        return `
+          <li>
+            <span class="name">${cityName}, ${stateName}</span>
+            <span class="population">${numberWithCommas(place.population)}</span>
+          </li>
+        `
+      }).join(); // convert from array w/multiple items to one big string
+      suggestions.innerHTML = html;
+    }
+
+    // our search input:
+    const searchInput = document.querySelector('.search');
+
+    // the display for suggestions (ul in the html)
+    const suggestions = document.querySelector('.suggestions');
+
+    // listen for changes on the input field
+    // EXCEPT, this doesn't actually fire until LEAVE the input field
+    searchInput.addEventListener('change', displayMatches);
+    // add keyup event so can stay in the field
+    searchInput.addEventListener('keyup', displayMatches);
+
+  </script>
+</body>
+
+</html>
