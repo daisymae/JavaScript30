@@ -58,7 +58,7 @@
             <span class="population">${numberWithCommas(place.population)}</span>
           </li>
         `
-      }).join(); // convert from array w/multiple items to one big string
+      }).join(''); // convert from array w/multiple items to one big string
       suggestions.innerHTML = html;
     }
 
