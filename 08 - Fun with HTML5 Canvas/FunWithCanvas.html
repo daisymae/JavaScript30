@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>HTML5 Canvas</title>
+</head>
+
+<body>
+  <!-- have a canvas, but need to make it active -->
+  <canvas id="draw" width="800" height="800"></canvas>
+  <script>
+    const canvas = document.querySelector('#draw');
+    /* actually draw on the context; can use 2D or 3D */
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    /* provides a color */
+    ctx.strokeStyle = '#BADA55';
+    /* when reach the end or meet another line should it square off? or round? (we're using round) */
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.lineWidth = 100;
+    // similar to photoshop blend modes; see more value options at
+    // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation
+    ctx.globalCompositeOperation = 'multiply';
+    /* detect if drawing or not */
+    let isDrawing = false;
+    let lastX = 0;
+    let lastY = 0;
+    let hue = 0; // red
+    let direction = true;
+
+    function draw(e) {
+      if (!isDrawing) return; // stop the fn from running when they are not moused down
+      console.log(e);
+      ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+      // this is one way to change the width:
+      //      ctx.lineWidth = hue; // as hue changes, so does the width
+      ctx.beginPath();
+      // start from 
+      ctx.moveTo(lastX, lastY);
+      // go to
+      ctx.lineTo(e.offsetX, e.offsetY); // values from the event
+      ctx.stroke();
+      // reset start to end point
+      //      lastX = e.offsetX;
+      //      lastY = e.offsetY;
+      // ES6 way of doing the previous 2 lines:
+      [lastX, lastY] = [e.offsetX, e.offsetY];
+      hue++; // change the color
+      if (hue >= 360) {
+        hue = 0;
+      }
+
+      if (ctx.lineWidth >= 100 || ctx.lineWidth <= 1) {
+        direction = !direction;
+      }
+      if (direction) {
+        // instead change the linewidth:
+        ctx.lineWidth++; // this will infinitely grow without check above to set direction
+      } else {
+        ctx.lineWidth--; // go back down
+      }
+    }
+    canvas.addEventListener('mousedown', (e) => {
+      // make into a block so can handle the start point better
+      isDrawing = true;
+      [lastX, lastY] = [e.offsetX, e.offsetY];
+    });
+
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', () => isDrawing = false);
+    canvas.addEventListener('mouseout', () => isDrawing = false);
+
+  </script>
+
+  <style>
+    html,
+    body {
+      margin: 0;
+    }
+
+  </style>
+
+</body>
+
+</html>
