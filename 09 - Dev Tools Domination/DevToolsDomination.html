@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Console Tricks!</title>
+</head>
+
+<body>
+
+  <p onClick="makeGreen()">×BREAK×DOWN×</p>
+
+  <script>
+    const dogs = [{
+      name: 'Snickers',
+      age: 2
+    }, {
+      name: 'hugo',
+      age: 8
+    }];
+
+    function makeGreen() {
+      const p = document.querySelector('p');
+      p.style.color = '#BADA55';
+      p.style.fontSize = '50px';
+    }
+
+    // The following are various ways to use the log
+    // Regular
+    console.log('hello');
+
+    // Interpolated
+    console.log("Hello I am a %s string!", '+poop'); // this one doesn't work for me; he gets a poop icon displayed in both his editor and in the console
+    let value = '+poop';
+    console.log(`Hello I am a ${value} string`); // using ES6 backtick interpolation
+
+    // Styled
+    // %c in front of the thing you want to style, then the second parameter is the CSS styling
+    console.log('%c I am some great text', 'font-size: 50px; background: red; text-shadow: 10px 10px 0 blue'); // this works
+
+    // warning!
+    console.warn("OH NOOOOO"); // gives a warning icon and trace stack of where the warning came from
+
+    // Error :|
+    console.error('Shit!');
+
+    // Info
+    console.info('Crocodiles eat 3-4 people per year'); // on his, it showed in info icon, but mine just looks like a normal message
+
+    // Testing
+    console.assert(1 === 1, 'That is wrong!'); // won't see anything because 1 === 1 is true; will only fire if something is wrong; change one of the 1s to a 2
+
+    // testing used w/elements on the page:
+    const p = document.querySelector('p');
+    console.assert(p.classList.contains('ouch'), 'You did not select the right Element!');
+
+    // clearing
+    console.clear(); // frustrate a developer by putting this at the bottom of your JS :-)
+
+    // Viewing DOM Elements
+    console.log(p);
+    console.dir(p); // allows you to open up the element and look at the details
+
+    console.clear();
+    // Grouping together
+    dogs.forEach(dog => {
+      // grouping puts all the information between the start of the group (here) and the groupEnd in a way it can be expanded/collapsed in the console
+      console.group(`${dog.name}`); // in place of group can use groupCollapsed which starts them in a collapsed state
+      console.log(`This is ${dog.name}`);
+      console.log(`${dog.name} is ${dog.age} years old`);
+      console.log(`${dog.name} is ${dog.age * 7} years old`);
+      console.groupEnd(`${dog.name}`);
+    })
+
+    // counting
+    // counts anything; DOM elements; this will count how many times this is run
+    console.count('Wes');
+    console.count('Wes');
+    console.count('Steve');
+    console.count('Steve');
+    console.count('Steve');
+    console.count('Wes');
+    console.count('Steve');
+    console.count('Wes');
+    console.count('Steve');
+    console.count('Wes');
+    console.count('Steve');
+    console.count('Steve');
+    console.count('Steve');
+    console.count('Steve');
+
+    // timing
+    console.time('fetching data');
+    fetch('https://api.github.com/users/daisymae')
+      .then(data => data.json())
+      .then(data => {
+        console.timeEnd('fetching data');
+        console.log(data);
+      });
+
+    // table
+    console.table(dogs);
+
+  </script>
+</body>
+
+</html>
